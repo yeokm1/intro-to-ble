@@ -1,0 +1,17 @@
+{
+  "name": "intro-ble",
+  "version": "0.0.1",
+  "description": "Node.js app for YKM's Intro to BLE talk",
+  "main": "ble.js",
+  "dependencies" :
+  {   "bleno" : "0.1.12"
+     ,"onoff" : "1.0.2"
+
+  },
+  "repository" :
+  { "type" : "git"
+  , "url" : "https://github.com/yeokm1/intro-to-ble.git"
+  },
+  "author": "",
+  "license": "None"
+}
