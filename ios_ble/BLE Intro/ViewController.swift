@@ -92,7 +92,8 @@ class ViewController: UIViewController, BLEHandlerDelegate, UITableViewDelegate,
   
         let cellID = "bleListCell"
         
-        var cell : UITableViewCell? = tableView.dequeueReusableCellWithIdentifier(cellID) as? UITableViewCell
+        var cell : UITableViewCell? = tableView.dequeueReusableCellWithIdentifier(cellID)
+
         
         if (cell == nil){
             cell = UITableViewCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: cellID)
@@ -119,7 +120,7 @@ class ViewController: UIViewController, BLEHandlerDelegate, UITableViewDelegate,
     
     //This will get called if a row is clicked
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        var uuidToConnect : NSUUID = capturedUUIDs[indexPath.row]
+        let uuidToConnect : NSUUID = capturedUUIDs[indexPath.row]
         bleHandler.connectToDevice(uuidToConnect)
         
     }

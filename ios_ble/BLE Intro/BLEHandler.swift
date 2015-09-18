@@ -44,7 +44,7 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
     
     func disconnectCurrentlyConnectedDevice(){
         if(currentConnectedDevice != nil){
-            centralManager.cancelPeripheralConnection(currentConnectedDevice)
+            centralManager.cancelPeripheralConnection(currentConnectedDevice!)
         }
     }
 
@@ -65,15 +65,15 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
     //CBCentralDelegate
     
     
-    func centralManager(central: CBCentralManager!, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [NSObject : AnyObject]!, RSSI: NSNumber!) {
+    func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         
         //Step 2 : Received advertisement packet
         
-        var deviceName = peripheral.name;
+        let deviceName = peripheral.name;
 
         //The name can occasionally be nil for some strange reason. Probable iOS bug
         if(deviceName != nil){
-            var localName : String? = advertisementData[CBAdvertisementDataLocalNameKey] as? String
+            let localName : String? = advertisementData[CBAdvertisementDataLocalNameKey] as? String
             
             if(localName != nil
                 && foundDevices.objectForKey(peripheral.identifier) == nil){
@@ -82,7 +82,7 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
                 
                 
                 foundDevices.setObject(peripheral, forKey: peripheral.identifier)
-                delegate.newDeviceScanned(deviceName, localName : localName!, uuid: peripheral.identifier, rssi: RSSI.integerValue, advertisementData: advertisementData)
+                delegate.newDeviceScanned(deviceName!, localName : localName!, uuid: peripheral.identifier, rssi: RSSI.integerValue, advertisementData: advertisementData)
             }
         }
 
@@ -95,14 +95,14 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
         
         //Step 2.5: Connect to device
         
-        var device : CBPeripheral? = foundDevices.objectForKey(uuid) as? CBPeripheral
+        let device : CBPeripheral? = foundDevices.objectForKey(uuid) as? CBPeripheral
         
         if(device == nil){
             return false
         } else {
             //Good practice to stop scan before start connecting
             bleScan(false)
-            centralManager.connectPeripheral(device, options: nil)
+            centralManager.connectPeripheral(device!, options: nil)
             return true
         }
         
@@ -113,8 +113,8 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
     //CBCentralDelegate
     
     
-    func centralManager(central: CBCentralManager!, didConnectPeripheral peripheral: CBPeripheral!) {
-        NSLog("%@: connected to %@", TAG, peripheral.name)
+    func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+        NSLog("%@: connected to %@", TAG, peripheral.name!)
         
         //Step 3: Connect success
         
@@ -124,30 +124,30 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
         peripheral.delegate = self
         peripheral.discoverServices(nil)
         
-        delegate.connectionState(peripheral.name, state: true)
+        delegate.connectionState(peripheral.name!, state: true)
         
         
     }
     
-    func centralManager(central: CBCentralManager!, didFailToConnectPeripheral peripheral: CBPeripheral!, error: NSError!) {
-        NSLog("%@: failed to connect to %@", TAG, peripheral.name)
+    func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+        NSLog("%@: failed to connect to %@", TAG, peripheral.name!)
         
-        delegate.connectionState(peripheral.name, state: false)
+        delegate.connectionState(peripheral.name!, state: false)
     }
     
-    func centralManager(central: CBCentralManager!, didDisconnectPeripheral peripheral: CBPeripheral!, error: NSError!) {
-        NSLog("%@: disconnected from %@", TAG, peripheral.name)
+    func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+        NSLog("%@: disconnected from %@", TAG, peripheral.name!)
         currentConnectedDevice = nil
         current_char_led = nil
         current_char_button = nil
         
-        delegate.connectionState(peripheral.name, state: false)
+        delegate.connectionState(peripheral.name!, state: false)
     }
     
     
     
     //Reference http://www.raywenderlich.com/52080/introduction-core-bluetooth-building-heart-rate-monitor
-    func centralManagerDidUpdateState(central: CBCentralManager!) {
+    func centralManagerDidUpdateState(central: CBCentralManager) {
         // Determine the state of the Central
         
         if (central.state == CBCentralManagerState.PoweredOff) {
@@ -169,71 +169,80 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
     
     
     //CBPeripheralDelegate
-    func peripheral(peripheral: CBPeripheral!, didDiscoverServices error: NSError!) {
-        NSLog("%@: Services Discovered for %@", TAG, peripheral.name)
+    func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
+        NSLog("%@: Services Discovered for %@", TAG, peripheral.name!)
         
         //Step 4: Services discovered
         
-        var services = peripheral.services
+        let services : [CBService]? = peripheral.services
         
-        for service in services {
-            let cbService = service as! CBService
-            if(cbService.UUID == UUID_SERVICE){
-
-                peripheral.discoverCharacteristics(nil, forService: cbService)
-                break
+        
+        if(services != nil){
+            for cbService in services! {
+                if(cbService.UUID == UUID_SERVICE){
+                    
+                    peripheral.discoverCharacteristics(nil, forService: cbService)
+                    break
+                }
             }
         }
         
-        delegate.servicesDiscovered(peripheral.name)
+        
+        delegate.servicesDiscovered(peripheral.name!)
         
   
     }
     
-    func peripheral(peripheral: CBPeripheral!, didDiscoverCharacteristicsForService service: CBService!, error: NSError!) {
-        NSLog("%@: Characteristics discovered for %@, of service %@", TAG, peripheral.name, service.UUID.UUIDString)
+    func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
+        NSLog("%@: Characteristics discovered for %@, of service %@", TAG, peripheral.name!, service.UUID.UUIDString)
         
         //Step 5: Characteristics discovered. We can usually stop here as we don't normally need to discover descriptors.
       
-        var characteristics = service.characteristics
+        let characteristics : [CBCharacteristic]? = service.characteristics
         
-        for characteristic in characteristics {
-            let cbCharacteristic  = characteristic as! CBCharacteristic
-            
-            if(cbCharacteristic.UUID == UUID_CHAR_LED){
-                current_char_led = cbCharacteristic
-            } else if (cbCharacteristic.UUID == UUID_CHAR_BUTTON){
-                current_char_button = cbCharacteristic
+        if(characteristics != nil){
+            for cbCharacteristic in characteristics! {
+                
+                if(cbCharacteristic.UUID == UUID_CHAR_LED){
+                    current_char_led = cbCharacteristic
+                } else if (cbCharacteristic.UUID == UUID_CHAR_BUTTON){
+                    current_char_button = cbCharacteristic
+                    
+                    
+                    //Apply to be notified so we can listen to changes in button characteristic
+                    peripheral.setNotifyValue(true, forCharacteristic: current_char_button!)
+                    
+                }
                 
                 
-                //Apply to be notified so we can listen to changes in button characteristic
-                peripheral.setNotifyValue(true, forCharacteristic: current_char_button)
                 
             }
-            
-            
-            
         }
+        
 
-        delegate.characteristicsDiscoveredFor(peripheral.name)
+
+        delegate.characteristicsDiscoveredFor(peripheral.name!)
     }
     
-    func peripheral(peripheral: CBPeripheral!, didUpdateValueForCharacteristic characteristic: CBCharacteristic!, error: NSError!) {
+    func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
 
         
         if(characteristic.UUID == UUID_CHAR_BUTTON){
-            var charValue : NSData = characteristic.value
+            let charValue : NSData? = characteristic.value
             
-            
-            var dataStr : String? = NSString(data: charValue, encoding: NSASCIIStringEncoding) as? String
-            
-            if(dataStr == nil){
-                dataStr = "blank"
+            if(charValue != nil){
+                var dataStr : String? = NSString(data: charValue!, encoding: NSASCIIStringEncoding) as? String
+                
+                if(dataStr == nil){
+                    dataStr = "blank"
+                }
+                
+                NSLog("%@: Characteristic changed for %@ with value %@", TAG, peripheral.name!, dataStr!)
+                
+                delegate.receivedStringValue(peripheral.name!, dataStr: dataStr!)
             }
             
-            NSLog("%@: Characteristic changed for %@ with value %@", TAG, peripheral.name, dataStr!)
-            
-            delegate.receivedStringValue(peripheral.name, dataStr: dataStr!)
+
         }
  
     }
@@ -253,10 +262,10 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
     func writeThisToLEDCharacteristic(stringToWrite : NSString){
         if(currentConnectedDevice != nil && current_char_led != nil){
             
-            var data : NSData = stringToWrite.dataUsingEncoding(NSASCIIStringEncoding)!
+            let data : NSData = stringToWrite.dataUsingEncoding(NSASCIIStringEncoding)!
             
             
-            currentConnectedDevice?.writeValue(data, forCharacteristic: current_char_led, type: CBCharacteristicWriteType.WithoutResponse)
+            currentConnectedDevice?.writeValue(data, forCharacteristic: current_char_led!, type: CBCharacteristicWriteType.WithoutResponse)
             
         }
     }
