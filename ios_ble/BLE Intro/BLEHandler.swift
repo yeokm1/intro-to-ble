@@ -263,6 +263,7 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
             
             let data : NSData = stringToWrite.dataUsingEncoding(NSASCIIStringEncoding)!
             
+            NSLog("%@: writeThisToLedChar %@ to peripheral", TAG, stringToWrite)
             
             currentConnectedDevice?.writeValue(data, forCharacteristic: current_char_led!, type: CBCharacteristicWriteType.WithoutResponse)
             
