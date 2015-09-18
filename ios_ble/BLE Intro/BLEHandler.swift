@@ -26,7 +26,7 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
     
     
     //We will receive advertisement packets continuously, so we use this Dictionary to keep track of what has been found so far.
-    var foundDevices : NSMutableDictionary!
+    var foundDevices : [NSUUID : CBPeripheral]!
     
     var currentConnectedDevice : CBPeripheral?
     var current_char_led : CBCharacteristic?
@@ -38,7 +38,7 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
         super.init()
         self.delegate = delegate
         centralManager = CBCentralManager(delegate: self, queue: nil)
-        foundDevices = NSMutableDictionary()
+        foundDevices = [NSUUID : CBPeripheral]()
     }
     
     
@@ -53,7 +53,7 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
         if(start){
             //Step 1: Start scanning
             
-            foundDevices.removeAllObjects()
+            foundDevices.removeAll()
             centralManager.scanForPeripheralsWithServices(nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey : true])
         } else {
             centralManager.stopScan()
@@ -69,19 +69,19 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
         
         //Step 2 : Received advertisement packet
         
-        let deviceName = peripheral.name;
+        let deviceName : String? = peripheral.name;
 
-        //The name can occasionally be nil for some strange reason. Probable iOS bug
         if(deviceName != nil){
             let localName : String? = advertisementData[CBAdvertisementDataLocalNameKey] as? String
             
             if(localName != nil
-                && foundDevices.objectForKey(peripheral.identifier) == nil){
+                //Check if I have seen advertisement packets from this device before
+                && foundDevices[peripheral.identifier] == nil){
                 
                 NSLog("%@: discovered %@, localname %@, rssi:%d", TAG, peripheral.description, localName!, RSSI.integerValue)
                 
+                foundDevices[peripheral.identifier] = peripheral
                 
-                foundDevices.setObject(peripheral, forKey: peripheral.identifier)
                 delegate.newDeviceScanned(deviceName!, localName : localName!, uuid: peripheral.identifier, rssi: RSSI.integerValue, advertisementData: advertisementData)
             }
         }
@@ -90,12 +90,11 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
     
     //Public facing connect method
     
-    
     func connectToDevice(uuid : NSUUID!) -> Bool{
         
         //Step 2.5: Connect to device
         
-        let device : CBPeripheral? = foundDevices.objectForKey(uuid) as? CBPeripheral
+        let device : CBPeripheral? = foundDevices[uuid]
         
         if(device == nil){
             return false
