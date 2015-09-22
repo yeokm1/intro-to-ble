@@ -17,6 +17,7 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 
 import java.nio.charset.Charset;
@@ -167,7 +168,7 @@ public class BLEHandler {
 
         //Step 2.5: Connect to device
 
-        BluetoothDevice deviceToConnect = foundDevices.get(macAddress);
+        final BluetoothDevice deviceToConnect = foundDevices.get(macAddress);
 
         /* Samsung phones require this to be called from the UI thread.
          *
@@ -177,7 +178,21 @@ public class BLEHandler {
          * For subsequent connections, it is still preferred to set to false
          * to prevent unintended background connection.
          */
-        deviceToConnect.connectGatt(context, false, mGattCallback);
+
+
+        if(!Build.MANUFACTURER.equalsIgnoreCase("samsung")){
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    //Call connect API in UI thread for Samsung phones only
+                    //This will also work non-Samsung phones
+                    deviceToConnect.connectGatt(context, false, mGattCallback);
+                }
+            });
+        } else {
+            deviceToConnect.connectGatt(context, false, mGattCallback);
+        }
+
     }
 
     public void disconnectCurrentlyConnectedDevice(){
