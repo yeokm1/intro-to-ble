@@ -180,7 +180,7 @@ public class BLEHandler {
          */
 
 
-        if(!Build.MANUFACTURER.equalsIgnoreCase("samsung")){
+        if(Build.MANUFACTURER.equalsIgnoreCase("samsung")){
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
