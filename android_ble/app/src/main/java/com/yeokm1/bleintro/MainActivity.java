@@ -110,7 +110,8 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
                     Toast.makeText(MainActivity.this, "Location Permission granted, you can now scan for Bluetooth devices", Toast.LENGTH_LONG).show();
                 } else {
                     // Permission Denied
-                    Toast.makeText(MainActivity.this, "Location Permission denied, Bluetooth Scan functions will fail", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Location Permission denied, so Bluetooth will not work. Closing app...", Toast.LENGTH_LONG).show();
+                    finish();
                 }
                 break;
             default:
