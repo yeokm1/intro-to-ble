@@ -1,5 +1,6 @@
 package com.yeokm1.bleintro;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 public class MainActivity extends Activity implements BLEHandlerCallback{
 
     public static final String TAG = "MainActivity";
+
+    private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
 
     private TextView statusView;
@@ -63,18 +66,19 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
         }
 
 
-        statusView = (TextView)findViewById(R.id.textview_status);
+        //New in Android 6.0 Marshmallow, we now have runtime permissions.
+        //BLE Scan requires location permissions and we have to ask the user to approve on runtime
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int hasLocationsPermission = checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
 
-
-         /*
-         * You normally have to request to turn on the Bluetooth if it is not already enabled
-         * but for brevity of this demo, I shall assume it is always on.
-
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            if (hasLocationsPermission != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
+            }
         }
-        */
+
+
+
+        statusView = (TextView)findViewById(R.id.textview_status);
 
         devicesMacAddr = new ArrayList<String>();
         devicesListAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, new ArrayList<String>());
@@ -96,6 +100,22 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
 
 
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(MainActivity.this, "Location Permission granted, you can now scan for Bluetooth devices", Toast.LENGTH_LONG).show();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(MainActivity.this, "Location Permission denied, Bluetooth Scan functions will fail", Toast.LENGTH_LONG).show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
 

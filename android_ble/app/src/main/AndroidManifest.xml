@@ -7,8 +7,8 @@
 
     <!-- Required for Bluetooth LE scan on Android >= 6 Marshmallow.
     At least one of the following location permissions is sufficient-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> -->
 
     <!-- If you declare required="true", you app will not appear on the Play Store for many devices -->
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
