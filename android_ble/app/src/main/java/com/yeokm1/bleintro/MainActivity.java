@@ -1,6 +1,8 @@
 package com.yeokm1.bleintro;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,6 +40,12 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
 
         bleHandler = new BLEHandler(getApplicationContext(), this);
 
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(this, "Your device does not have Bluetooth", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         //Check if at least Android 4.3
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2){
@@ -92,6 +100,13 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
 
 
     public void startScanButtonPressed(View view){
+
+        if (!BluetoothAdapter.getDefaultAdapter().isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivity(enableBtIntent);
+            return;
+        }
+
         showStatusToScreen("Scanning for BLE peripherals...");
         devicesMacAddr.clear();
         devicesListAdapter.clear();
