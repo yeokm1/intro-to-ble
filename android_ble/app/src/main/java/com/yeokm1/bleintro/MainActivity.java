@@ -43,6 +43,7 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2){
             Toast.makeText(this, "You need Android 4.3 and above to use BLE.", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
 
         //It's rare for devices that ship with Android 4.3 and above to not have BLE hardware
@@ -50,6 +51,7 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             Toast.makeText(this, "BLE hardware not found", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
 
 
