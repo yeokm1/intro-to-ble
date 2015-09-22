@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> -->
 
-    <!-- If you declare required="true", you app will not appear on the Play Store for many devices -->
+    <!-- If you declare required="true", you app will not appear on the Play Store for devices which don't have BLE -->
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
 
 
