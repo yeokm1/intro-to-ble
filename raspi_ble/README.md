@@ -27,7 +27,7 @@ Arch Linux ARM
 pacman -Syu python2 make gcc git bluez bluez-utils bluez-libs nodejs npm
 git clone https://github.com/yeokm1/intro-to-ble.git
 cd intro-to-ble/raspi_ble
-npm install
+npm install --python=python2.7
 ```
 
 Raspbian
