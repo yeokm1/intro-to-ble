@@ -122,7 +122,7 @@ nRF8001::nRF8001(unsigned char req, unsigned char rdy, unsigned char rst) :
   this->_aciState.aci_pins.reqn_pin               = req;
   this->_aciState.aci_pins.rdyn_pin               = rdy;
 
-#ifndef SPI_HAS_TRANSACTION
+#if !defined(SPI_HAS_TRANSACTION) || defined(__SAMD21G18A__)
 #if defined(__SAM3X8E__)
   this->_aciState.aci_pins.spi_clock_divider      = 42;
 #else
@@ -995,18 +995,21 @@ void nRF8001::poll() {
         break;
 
       case ACI_EVT_PIPE_STATUS: {
-        uint64_t* openPipes = (uint64_t*)&aciEvt->params.pipe_status.pipes_open_bitmap;
-        uint64_t* closedPipes = (uint64_t*)&aciEvt->params.pipe_status.pipes_closed_bitmap;
-
 #ifdef NRF_8001_DEBUG
         Serial.println(F("Evt Pipe Status "));
+#endif
+        uint64_t closedPipes;
+        memcpy(&closedPipes, aciEvt->params.pipe_status.pipes_closed_bitmap, sizeof(closedPipes));
 
-        Serial.println((unsigned long)*openPipes, HEX);
-        Serial.println((unsigned long)*closedPipes, HEX);
+#ifdef NRF_8001_DEBUG
+        uint64_t openPipes;
+        memcpy(&openPipes, aciEvt->params.pipe_status.pipes_open_bitmap, sizeof(openPipes));
+
+        Serial.println((unsigned long)openPipes, HEX);
+        Serial.println((unsigned long)closedPipes, HEX);
 #endif
         bool discoveryFinished = lib_aci_is_discovery_finished(&this->_aciState);
-
-        if ((unsigned long)*closedPipes == 0 && !discoveryFinished) {
+        if (closedPipes == 0 && !discoveryFinished) {
           this->_closedPipesCleared = true;
         }
 
