@@ -20,5 +20,5 @@ This Arduino is programmed to act as a Bluetooth Low Energy peripheral as part o
 BLE Shield is not shown in the schematic.
 
 ##Software/Libraries used
-1. Arduino IDE 1.6.4
+1. Arduino IDE 1.6.
 2. [Arduino BLE Peripheral by sandeepmistry.](https://github.com/sandeepmistry/arduino-BLEPeripheral)
