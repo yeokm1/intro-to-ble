@@ -1,5 +1,6 @@
 package com.yeokm1.bleintro;
 
+import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -150,6 +151,7 @@ public class BLEHandler {
     }
 
     //This is used from Android 5.0
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private class NewLeScanCallback extends ScanCallback {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
