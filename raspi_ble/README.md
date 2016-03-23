@@ -24,7 +24,7 @@ I personally prefer Arch Linux but I include instructions for Raspbian as well.
 
 Arch Linux ARM
 ```bash
-pacman -Syu python2 make gcc git bluez bluez-utils bluez-libs nodejs npm
+pacman -Syu --needed python2 make gcc git bluez bluez-utils bluez-libs nodejs npm
 git clone https://github.com/yeokm1/intro-to-ble.git
 cd intro-to-ble/raspi_ble
 npm install
