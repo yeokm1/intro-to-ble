@@ -24,7 +24,7 @@ I personally prefer Arch Linux but I include instructions for Raspbian too.
 
 For Raspberry Pi 3, there are some issues with the serial UART and the solution may affect the Bluetooth portion as well. Consult the [gist for Arch Linux ARM I have written for more information](https://gist.github.com/yeokm1/d6c3ca927919c61257cd). 
 
-For Raspbian on Rpi3, just add the `core_freq=250` to the bottom of the `/boot/config.txt` to get proper Serial debug is good enough.
+For Raspbian on Rpi3, just add the `enable_uart=1` to the bottom of the `/boot/config.txt` to get proper Serial debug is good enough.
 
 Arch Linux ARM
 ```bash
