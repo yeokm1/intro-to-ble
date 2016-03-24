@@ -79,6 +79,27 @@ ExecStart=/root/intro-to-ble/raspi_ble/intro_ble_startup.sh
 systemctl enable intro-to-ble.service
 ```
 
+Raspbian only
+
+```bash
+sudo nano /etc/systemd/system/intro-to-ble.service
+
+#Add the following lines to intro-to-ble.service till but not including #end
+[Unit]
+Description=To start intro-to-ble on startup
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=idle
+RemainAfterExit=yes
+ExecStart=/home/pi/intro-to-ble/raspi_ble/intro_ble_startup_raspbian.sh
+#end
+
+sudo systemctl enable intro-to-ble.service
+```
+
 ##Read-only file system
 
 I recommend a read-only file system in case rapid restarts are necessary in a demo and you don't wish to corrupt the SD card. Consult my [gist for Arch Linux](https://gist.github.com/yeokm1/8b0ffc03e622ce011010).
