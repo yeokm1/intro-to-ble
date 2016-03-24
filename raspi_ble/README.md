@@ -46,6 +46,8 @@ Raspbian
 sudo apt-get install pi-bluetooth bluez libbluetooth-dev libudev-dev git 
 
 #Manually install latest nodejs as Raspbian's is severely out-of-date
+#For older RPis, you have to replace armv7l with armv6l
+
 wget https://nodejs.org/dist/v5.9.0/node-v5.9.0-linux-armv7l.tar.gz
 tar -xvf node-v5.9.0-linux-armv7l.tar.gz
 cd node-v5.9.0-linux-armv7l/
