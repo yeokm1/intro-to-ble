@@ -51,6 +51,7 @@ tar -xvf node-v5.9.0-linux-armv7l.tar.gz
 cd node-v5.9.0-linux-armv7l/
 sudo cp -R * /usr/local/
 
+cd ~
 git clone https://github.com/yeokm1/intro-to-ble.git
 cd intro-to-ble/raspi_ble
 npm install
