@@ -20,7 +20,11 @@ This Raspberry Pi is programmed to act as a Bluetooth Low Energy peripheral as p
 
 ##Setup instructions
 
-I personally prefer Arch Linux but I include instructions for Raspbian too. For Raspberry Pi 3, there are some issues with the serial UART and the solution may affect the Bluetooth portion as well. Consult the [gist I have written for more information](https://gist.github.com/yeokm1/d6c3ca927919c61257cd).
+I personally prefer Arch Linux but I include instructions for Raspbian too. 
+
+For Raspberry Pi 3, there are some issues with the serial UART and the solution may affect the Bluetooth portion as well. Consult the [gist for Arch Linux ARM I have written for more information](https://gist.github.com/yeokm1/d6c3ca927919c61257cd). 
+
+For Raspbian on Rpi3, just add the `core_freq=250` to the bottom of the `/boot/config.txt` to get proper Serial debug is good enough.
 
 Arch Linux ARM
 ```bash
@@ -39,10 +43,14 @@ npm install
 
 Raspbian
 ```bash
+sudo apt-get install pi-bluetooth bluez libbluetooth-dev libudev-dev git 
+
 #Manually install latest nodejs as Raspbian's is severely out-of-date
-sudo apt-get install bluetooth bluez-utils libbluetooth-dev
-wget http://node-arm.herokuapp.com/node_latest_armhf.deb
-sudo dpkg -i node_latest_armhf.deb
+wget https://nodejs.org/dist/v5.9.0/node-v5.9.0-linux-armv7l.tar.gz
+tar -xvf node-v5.9.0-linux-armv7l.tar.gz
+cd node-v5.9.0-linux-armv7l/
+sudo cp -R * /usr/local/
+
 git clone https://github.com/yeokm1/intro-to-ble.git
 cd intro-to-ble/raspi_ble
 npm install
