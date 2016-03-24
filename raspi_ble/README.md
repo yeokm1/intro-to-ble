@@ -7,7 +7,7 @@ This Raspberry Pi is programmed to act as a Bluetooth Low Energy peripheral as p
 
 ##Parts used
 1. Raspberry Pi 2 Model B (others will just as well)
-2. IOGear GBU521 USB BLE (Dual-Mode) adapter
+2. IOGear GBU521 USB BLE (Dual-Mode) adapter, not required for Rpi 3
 3. Red LED
 4. Green LED
 5. Blue LED
@@ -20,11 +20,17 @@ This Raspberry Pi is programmed to act as a Bluetooth Low Energy peripheral as p
 
 ##Setup instructions
 
-I personally prefer Arch Linux but I include instructions for Raspbian as well.
+I personally prefer Arch Linux but I include instructions for Raspbian too. For Raspberry Pi 3, there are some issues with the serial UART and the solution may affect the Bluetooth portion as well. Consult the [gist I have written for more information](https://gist.github.com/yeokm1/d6c3ca927919c61257cd).
 
 Arch Linux ARM
 ```bash
+#This is for Rpi 3 only if you have followed my gist. My gist will have installed a patched version of bluez.
+pacman -Syu --needed python2 make gcc git bluez-utils bluez-libs nodejs npm
+
+#Other Rpis will install bluez
 pacman -Syu --needed python2 make gcc git bluez bluez-utils bluez-libs nodejs npm
+
+
 git clone https://github.com/yeokm1/intro-to-ble.git
 cd intro-to-ble/raspi_ble
 npm install
