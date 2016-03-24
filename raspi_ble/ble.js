@@ -194,14 +194,7 @@ bleno.on('accept', function(clientAddress){
 
 bleno.on('disconnect', function(clientAddress){
         
-    //If you are using Raspbian, the clientAddress parameter may be null
-    //Could be a bug on Raspbian or out-of-date bluetooth stack.
-
-    if(clientAddress){
-        console.log('Disconnected ' + clientAddress);
-    } else {
-        console.log('Disconnected');
-    }
+    console.log('Disconnected ' + clientAddress);
     
     //This notification function is no longer valid so set to null
     charButtonNotification = null;
