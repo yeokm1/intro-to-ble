@@ -25,7 +25,7 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
     var delegate : BLEHandlerDelegate!
     
     
-    //We will receive advertisement packets continuously, so we use this Dictionary to keep track of what has been found so far.
+    //We will receive advertisement packets continuously depending on scan options, so we use this Dictionary to keep track of what has been found so far.
     var foundDevices : [NSUUID : CBPeripheral]!
     
     var currentConnectedDevice : CBPeripheral?
@@ -37,6 +37,8 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
     init(delegate : BLEHandlerDelegate){
         super.init()
         self.delegate = delegate
+        
+        //Nil queue means the main queue. You might not want to use the main queue if you are doing heavy work on receiving callbacks
         centralManager = CBCentralManager(delegate: self, queue: nil)
         foundDevices = [NSUUID : CBPeripheral]()
     }
