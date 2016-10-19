@@ -13,7 +13,7 @@ import CoreBluetooth
 protocol BLEHandlerDelegate {
     
     //Step 2 : Received advertisement packet
-    func newDeviceScanned(deviceName : String, localName : String, uuid: NSUUID, rssi : Int, advertisementData : [NSObject : AnyObject]!)
+    func newDeviceScanned(deviceName : String, localName : String, uuid: UUID, rssi : Int, advertisementData : [NSObject : AnyObject]!)
     
     //Step 3: Connect success
     func connectionState(deviceName : String, state : Bool)

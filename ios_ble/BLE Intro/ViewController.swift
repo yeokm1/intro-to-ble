@@ -17,7 +17,7 @@ class ViewController: UIViewController, BLEHandlerDelegate, UITableViewDelegate,
     
     var cellTitles : Array<String>!
     var cellLabels : Array<String>!
-    var capturedUUIDs : Array<NSUUID>!
+    var capturedUUIDs : Array<UUID>!
 
     @IBOutlet weak var bleScannedList: UITableView!
     
@@ -43,7 +43,7 @@ class ViewController: UIViewController, BLEHandlerDelegate, UITableViewDelegate,
     }
 
 
-    @IBAction func startScanPressed(sender: UIButton) {
+    @IBAction func startScanPressed(_ sender: UIButton) {
         
         //Clear results of previous scan
         cellTitles.removeAll()
@@ -54,33 +54,34 @@ class ViewController: UIViewController, BLEHandlerDelegate, UITableViewDelegate,
 
         self.statusLabel.text = "Scanning for BLE peripherals..."
         
-        bleHandler.bleScan(true)
+        bleHandler.bleScan(start: true)
     }
-    @IBAction func stopScanPressed(sender: UIButton) {
+    
+    @IBAction func stopScanPressed(_ sender: UIButton) {
         
         self.statusLabel.text = "Scan stopped"
         
-        bleHandler.bleScan(false)
+        bleHandler.bleScan(start: false)
     }
     
-    @IBAction func disconnectPressed(sender: UIButton) {
+    @IBAction func disconnectPressed(_ sender: UIButton) {
         bleHandler.disconnectCurrentlyConnectedDevice()
     }
 
-    @IBAction func toggleBlue(sender: UIButton) {
+    @IBAction func toggleBlue(_ sender: UIButton) {
         bleHandler.sendToggleBlueCommand()
     }
     
-    @IBAction func toggleYellow(sender: UIButton) {
+    @IBAction func toggleYellow(_ sender: UIButton) {
         bleHandler.sendToggleYellowCommand()
     }
     
     func setStatusTextFromNonUIThread(text : String){
         
-        //Run in UI thread as sometimes this method may be called from other threads
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            self.statusLabel.text = text
-        })
+        DispatchQueue.main.async {
+           self.statusLabel.text = text
+        }
+    
     }
     
  
@@ -88,15 +89,15 @@ class ViewController: UIViewController, BLEHandlerDelegate, UITableViewDelegate,
     
     
     //The table will display what is set here
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
   
         let cellID = "bleListCell"
         
-        var cell : UITableViewCell? = tableView.dequeueReusableCellWithIdentifier(cellID)
+        var cell : UITableViewCell? = tableView.dequeueReusableCell(withIdentifier: cellID)
 
         
         if (cell == nil){
-            cell = UITableViewCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: cellID)
+            cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: cellID)
         }
         
         //Device/Local name in the title
@@ -112,33 +113,32 @@ class ViewController: UIViewController, BLEHandlerDelegate, UITableViewDelegate,
 
  
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return cellTitles.count
     }
 
     //UITableViewDelegate
     
     //This will get called if a row is clicked
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let uuidToConnect : NSUUID = capturedUUIDs[indexPath.row]
-        bleHandler.connectToDevice(uuidToConnect)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let uuidToConnect : UUID = capturedUUIDs[indexPath.row]
+        let _ = bleHandler.connectToDevice(uuid: uuidToConnect)
         
     }
     
     //BLEHandlerDelegate
-    func newDeviceScanned(deviceName : String, localName: String, uuid : NSUUID, rssi: Int, advertisementData: [NSObject : AnyObject]!) {
+    func newDeviceScanned(deviceName : String, localName: String, uuid : UUID, rssi: Int, advertisementData: [NSObject : AnyObject]!) {
        
         //We just detected a new device
         
         cellTitles.append(deviceName + " (" + localName + ")")
-        cellLabels.append(uuid.UUIDString + " (" + String(rssi) + ")")
+        cellLabels.append(uuid.uuidString + " (" + String(rssi) + ")")
         capturedUUIDs.append(uuid)
         
-            
         //Tell the list to update to display the newly found device
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async {
             self.bleScannedList.reloadData()
-        })
+        }
         
     }
     
@@ -152,22 +152,22 @@ class ViewController: UIViewController, BLEHandlerDelegate, UITableViewDelegate,
             statusString = "Disconnected from: " + deviceName
         }
         
-        setStatusTextFromNonUIThread(statusString)
+        setStatusTextFromNonUIThread(text: statusString)
     }
     
 
     func servicesDiscovered(deviceName : String){
-        setStatusTextFromNonUIThread("Services discovered for: " + deviceName)
+        setStatusTextFromNonUIThread(text: "Services discovered for: " + deviceName)
     }
     
     func characteristicsDiscoveredFor(deviceName : String){
-        setStatusTextFromNonUIThread("Chars discovered for: " + deviceName)
+        setStatusTextFromNonUIThread(text: "Chars discovered for: " + deviceName)
     }
     
     
 
     func receivedStringValue(deviceName: String, dataStr: String) {
-        setStatusTextFromNonUIThread("Received \"" + dataStr + "\" from " + deviceName)
+        setStatusTextFromNonUIThread(text: "Received \"" + dataStr + "\" from " + deviceName)
     }
     
 }
