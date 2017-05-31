@@ -68,8 +68,7 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
     
     //CBCentralDelegate
     
-    
-    func centralManager(_ central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi: NSNumber) {
         
         //Step 2 : Received advertisement packet
         
@@ -83,11 +82,11 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
                 && foundDevices[peripheral.identifier] == nil){
      
                 
-                NSLog("%@: discovered %@, localname %@, rssi:%d", TAG, peripheral.description, localName!, RSSI.intValue)
+                NSLog("%@: discovered %@, localname %@, rssi:%d", TAG, peripheral.description, localName!, rssi.intValue)
                 
                 foundDevices.updateValue(peripheral, forKey: peripheral.identifier)
                 
-                delegate.newDeviceScanned(deviceName: deviceName!, localName : localName!, uuid: peripheral.identifier, rssi: RSSI.intValue, advertisementData: advertisementData as [NSObject : AnyObject]!)
+                delegate.newDeviceScanned(deviceName: deviceName!, localName : localName!, uuid: peripheral.identifier, rssi: rssi.intValue, advertisementData: advertisementData as [NSObject : AnyObject]!)
             }
         }
 
@@ -232,10 +231,11 @@ class BLEHandler : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate{
 
         
         if(characteristic.uuid == UUID_CHAR_BUTTON){
-            let charValue : NSData? = characteristic.value as NSData?
+            let charValue : Data? = characteristic.value
             
             if(charValue != nil){
-                var dataStr : String? = NSString(data: charValue! as Data, encoding: String.Encoding.ascii.rawValue) as? String
+
+                var dataStr: String? = String(data: charValue!, encoding: .ascii)
                 
                 if(dataStr == nil){
                     dataStr = "blank"
