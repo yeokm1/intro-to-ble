@@ -5,7 +5,7 @@ This Raspberry Pi is programmed to act as a Bluetooth Low Energy peripheral as p
 
 ![Screen](misc/front.jpg)
 
-##Parts used
+## Parts used
 1. Raspberry Pi 2 Model B (others will just as well)
 2. IOGear GBU521 USB BLE (Dual-Mode) adapter, not required for Rpi 3
 3. Red LED
@@ -18,11 +18,11 @@ This Raspberry Pi is programmed to act as a Bluetooth Low Energy peripheral as p
 
 ![Screen](misc/schematic.png)
 
-##Setup instructions
+## Setup instructions
 
-I personally prefer Arch Linux but I include instructions for Raspbian too. 
+I personally prefer Arch Linux but I include instructions for Raspbian too.
 
-For Raspberry Pi 3, there are some issues with the serial UART and the solution may affect the Bluetooth portion as well. Consult the [gist for Arch Linux ARM and notes for Raspbian I have written for more information](https://gist.github.com/yeokm1/d6c3ca927919c61257cd). 
+For Raspberry Pi 3, there are some issues with the serial UART and the solution may affect the Bluetooth portion as well. Consult the [gist for Arch Linux ARM and notes for Raspbian I have written for more information](https://gist.github.com/yeokm1/d6c3ca927919c61257cd).
 
 Arch Linux ARM
 ```bash
@@ -41,7 +41,7 @@ npm install
 
 Raspbian
 ```bash
-sudo apt-get install pi-bluetooth bluez libbluetooth-dev libudev-dev git 
+sudo apt-get install pi-bluetooth bluez libbluetooth-dev libudev-dev git
 
 #Manually install latest nodejs as Raspbian's is severely out-of-date
 #For older RPis, you have to replace armv7l with armv6l
@@ -57,7 +57,7 @@ cd intro-to-ble/raspi_ble
 npm install
 ```
 
-##Start on boot
+## Start on boot
 
 Arch Linux only
 
@@ -101,11 +101,11 @@ ExecStart=/home/pi/intro-to-ble/raspi_ble/intro_ble_startup_raspbian.sh
 sudo systemctl enable intro-to-ble.service
 ```
 
-##Read-only file system
+## Read-only file system
 
 I recommend a read-only file system in case rapid restarts are necessary in a demo and you don't wish to corrupt the SD card. Consult my [gist for Arch Linux](https://gist.github.com/yeokm1/8b0ffc03e622ce011010).
 
-##Run instructions
+## Run instructions
 
 Both
 ```bash
