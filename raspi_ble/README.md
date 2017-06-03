@@ -20,7 +20,7 @@ This Raspberry Pi is programmed to act as a Bluetooth Low Energy peripheral as p
 
 ## Setup instructions
 
-As of time of writing, I prefer to use Raspbian as Arch Linux does not come with Bluetooth support by default.
+As of time of writing, I have changed my preference to use Raspbian as Arch Linux does not come with Bluetooth support by default.
 
 For Raspberry Pi 3, there are some issues with the serial UART and the solution may affect the Bluetooth portion as well. Consult the [gist for Arch Linux ARM and notes for Raspbian I have written for more information](https://gist.github.com/yeokm1/d6c3ca927919c61257cd).
 
