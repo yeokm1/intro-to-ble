@@ -4,8 +4,8 @@
   "description": "Node.js app for YKM's Intro to BLE talk",
   "main": "ble.js",
   "dependencies" :
-  {   "bleno" : "0.4.0"
-     ,"onoff" : "1.0.4"
+  {   "bleno" : "0.4.2"
+     ,"onoff" : "1.1.2"
 
   },
   "repository" :
