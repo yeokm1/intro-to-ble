@@ -32,6 +32,13 @@ pacman -Syu --needed python2 make gcc git bluez-utils bluez-libs nodejs npm
 #Other Rpis will install bluez
 pacman -Syu --needed python2 make gcc git bluez bluez-utils bluez-libs nodejs npm
 
+# Start BT on boot according to https://wiki.archlinux.org/index.php/bluetooth#Auto_power-on_after_boot
+nano /etc/bluetooth/main.conf
+
+# Add "AutoEnable=true" to the policy section to replace hciconfig hci0 up
+[Policy]
+AutoEnable=true
+# End
 
 git clone https://github.com/yeokm1/intro-to-ble.git
 cd intro-to-ble/raspi_ble
