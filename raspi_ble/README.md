@@ -6,8 +6,8 @@ This Raspberry Pi is programmed to act as a Bluetooth Low Energy peripheral as p
 ![Screen](misc/front.jpg)
 
 ## Parts used
-1. Raspberry Pi 2 Model B (others will just as well)
-2. IOGear GBU521 USB BLE (Dual-Mode) adapter, not required for Rpi 3
+1. Raspberry Pi 3 (others will just as well USB BT adapter)
+2. IOGear GBU521 USB BLE (Dual-Mode) adapter before RPi 3
 3. Red LED
 4. Green LED
 5. Blue LED
@@ -20,7 +20,7 @@ This Raspberry Pi is programmed to act as a Bluetooth Low Energy peripheral as p
 
 ## Setup instructions
 
-I personally prefer Arch Linux but I include instructions for Raspbian too.
+As of time of writing, I prefer to use Raspbian as Arch Linux does not come with Bluetooth support by default.
 
 For Raspberry Pi 3, there are some issues with the serial UART and the solution may affect the Bluetooth portion as well. Consult the [gist for Arch Linux ARM and notes for Raspbian I have written for more information](https://gist.github.com/yeokm1/d6c3ca927919c61257cd).
 
@@ -41,14 +41,14 @@ npm install
 
 Raspbian
 ```bash
-sudo apt-get install pi-bluetooth bluez libbluetooth-dev libudev-dev git
+sudo apt install libbluetooth-dev libudev-dev git
 
 #Manually install latest nodejs as Raspbian's is severely out-of-date
 #For older RPis, you have to replace armv7l with armv6l
 
-wget https://nodejs.org/dist/v5.9.1/node-v5.9.1-linux-armv7l.tar.gz
-tar -xvf node-v5.9.1-linux-armv7l.tar.gz
-cd node-v5.9.1-linux-armv7l/
+wget https://nodejs.org/dist/v6.10.3/node-v6.10.3-linux-armv7l.tar.xz
+tar -xf node-v6.10.3-linux-armv7l.tar.xz
+ cd node-v6.10.3-linux-armv7l
 sudo cp -R * /usr/local/
 
 cd ~
