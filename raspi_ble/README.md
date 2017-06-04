@@ -125,7 +125,7 @@ node ble.js
 sudo node ble.js
 ```
 
-##Software/Libraries used
+## Software/Libraries used
 1. Nodejs
 2. [Bleno by sandeepmistry](https://github.com/sandeepmistry/bleno)
 3. [onoff GPIO by fivdi](https://github.com/fivdi/onoff)
