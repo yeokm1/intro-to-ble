@@ -55,7 +55,7 @@ sudo apt install libbluetooth-dev libudev-dev git
 
 wget https://nodejs.org/dist/v6.10.3/node-v6.10.3-linux-armv7l.tar.xz
 tar -xf node-v6.10.3-linux-armv7l.tar.xz
- cd node-v6.10.3-linux-armv7l
+cd node-v6.10.3-linux-armv7l
 sudo cp -R * /usr/local/
 
 cd ~
