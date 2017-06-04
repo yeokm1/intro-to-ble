@@ -117,16 +117,11 @@ I recommend a read-only file system in case rapid restarts are necessary in a de
 Both
 ```bash
 cd intro-to-ble/raspi_ble
-```
 
-Arch Linux only
-```bash
-hciconfig hci0 up
+# Arch Linux only
 node ble.js
-```
 
-Raspbian only
-```bash
+# Raspbian only
 sudo node ble.js
 ```
 
