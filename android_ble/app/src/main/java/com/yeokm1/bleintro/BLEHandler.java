@@ -127,6 +127,10 @@ public class BLEHandler {
         String macAddress = device.getAddress();
         String localName = device.getName();
 
+        if(localName == null){
+            return;
+        }
+
         String logMessage = String.format("Scanning: %s (%s), rssi: %d", localName, macAddress, rssi);
         //Log.i(TAG, logMessage);
 
