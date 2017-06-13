@@ -1,6 +1,6 @@
 # intro-to-ble
 
-A talk I gave to introduce the audience to basic Bluetooth Low Energy concepts followed by code explanations. 
+A talk I gave to introduce the audience to basic Bluetooth Low Energy concepts followed by code explanations.
 
 Part 1 of my talk I gave at Hackware v0.7.
 

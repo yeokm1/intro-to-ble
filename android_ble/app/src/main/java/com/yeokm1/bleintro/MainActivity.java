@@ -16,25 +16,18 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-
 public class MainActivity extends Activity implements BLEHandlerCallback{
-
     public static final String TAG = "MainActivity";
 
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
-
     private TextView statusView;
     private ListView bleScannedList;
-
-
 
     private ArrayAdapter devicesListAdapter;
     private ArrayList<String> devicesMacAddr;
 
     private BLEHandler bleHandler;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +58,6 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
             return;
         }
 
-
         //New in Android 6.0 Marshmallow, we now have runtime permissions.
         //BLE Scan requires location permissions and we have to ask the user to approve on runtime
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -76,30 +68,22 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
             }
         }
 
-
-
         statusView = (TextView)findViewById(R.id.textview_status);
 
         devicesMacAddr = new ArrayList<String>();
         devicesListAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, new ArrayList<String>());
         bleScannedList = (ListView) findViewById(R.id.listview_scanned);
         bleScannedList.setAdapter(devicesListAdapter);
-
         bleScannedList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 //Stop scan before attempting to connect
                 bleHandler.bleScan(false);
-
 
                 String macAddressOfDeviceToConnect = devicesMacAddr.get(position);
                 bleHandler.connectToDevice(macAddressOfDeviceToConnect);
             }
         });
-
-
-
     }
 
     @Override
@@ -119,9 +103,7 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
         }
     }
 
-
     public void startScanButtonPressed(View view){
-
         if (!BluetoothAdapter.getDefaultAdapter().isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivity(enableBtIntent);
@@ -157,7 +139,6 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
         showStatusToScreen(message);
     }
 
-
     public void showStatusToScreen(final String message){
         //Run in UI thread as sometimes this method may be called from other threads
         runOnUiThread(new Runnable() {
@@ -167,7 +148,6 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
             }
         });
     }
-
 
     //BLEHandler callbacks
 
@@ -184,7 +164,6 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
             }
         });
     }
-
 
     @Override
     public void connectionState(String localName, String macAddress, boolean state){
@@ -208,16 +187,4 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
     public void receivedStringValue(String localName, String macAddress, final String strValue){
         showDeviceStatusToScreen("Received \"" + strValue + "\" from ", localName, macAddress);
     }
-
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -30,7 +30,6 @@ import java.util.UUID;
  * Created by yeokm1 on 29/3/2015.
  */
 public class BLEHandler {
-
     private static final String TAG = "BLEHandler";
 
     private static final UUID UUID_SERVICE =     UUID.fromString("12345678-9012-3456-7890-123456789012");
@@ -40,7 +39,6 @@ public class BLEHandler {
     //This UUID is a Client Characteristic Configuration descriptor UUID for a Characteristic which has the notify property on the peripheral
     //I should not be hard coding this but I cannot find a constant defined anywhere.
     private static UUID UUID_CLIENT_CHARACTERISTIC_CONFIG_DESCRIPTOR = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
-
 
     private Context context;
 
@@ -52,7 +50,6 @@ public class BLEHandler {
     //Android 5.0 and above uses this
     private BluetoothLeScanner bleScanner;
     private NewLeScanCallback newLeScanCallback;
-
 
     //We will receive advertisement packets continuously, so we use this HashMap to keep track of what has been found so far.
     private HashMap<String, BluetoothDevice> foundDevices = new HashMap<String, BluetoothDevice>();
@@ -70,7 +67,6 @@ public class BLEHandler {
     }
 
     public void bleScan(boolean start){
-
         if(start){
             //Step 1: Start scanning
             foundDevices.clear();
@@ -102,8 +98,6 @@ public class BLEHandler {
 
                 mBluetoothAdapter.startLeScan(oldLeScanCallback);
             }
-
-
         } else {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 if(bleScanner != null){
@@ -111,7 +105,6 @@ public class BLEHandler {
                     bleScanner = null;
                     newLeScanCallback = null;
                 }
-
             } else {
                 if(oldLeScanCallback != null) {
                     mBluetoothAdapter.stopLeScan(oldLeScanCallback);
@@ -141,10 +134,7 @@ public class BLEHandler {
 
             bleHandlerCallback.newDeviceScanned(localName, macAddress, rssi, scanRecord);
         }
-
-
     }
-
 
     //This is used from Android 4.3 to 4.4
     private class OldLeScanCallback implements BluetoothAdapter.LeScanCallback{
@@ -185,7 +175,6 @@ public class BLEHandler {
          * to prevent unintended background connection.
          */
 
-
         if(Build.MANUFACTURER.equalsIgnoreCase("samsung")){
             new Handler().post(new Runnable() {
                 @Override
@@ -198,7 +187,6 @@ public class BLEHandler {
         } else {
             deviceToConnect.connectGatt(context, false, mGattCallback);
         }
-
     }
 
     public void disconnectCurrentlyConnectedDevice(){
@@ -209,8 +197,6 @@ public class BLEHandler {
        }
     }
 
-
-
     private void logDeviceMessage(String frontMessage, BluetoothDevice device){
         String localName = device.getName();
         String macAddress = device.getAddress();
@@ -218,7 +204,6 @@ public class BLEHandler {
         String logMessage = String.format("%s: %s (%s)", frontMessage, localName, macAddress);
         Log.i(TAG, logMessage);
     }
-
 
     private BluetoothGattService getCustomService(){
         if(gattOfCurrentDevice == null){
@@ -228,7 +213,6 @@ public class BLEHandler {
         BluetoothGattService service = gattOfCurrentDevice.getService(UUID_SERVICE);
         return service;
     }
-
 
     //To receive callbacks from a bluetooth device
     private BluetoothGattCallback mGattCallback =  new BluetoothGattCallback() {
@@ -247,7 +231,6 @@ public class BLEHandler {
 
                 gattOfCurrentDevice = gatt;
                 gatt.discoverServices();
-
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 logDeviceMessage("Disconnected from", gatt.getDevice());
 
@@ -256,11 +239,7 @@ public class BLEHandler {
                 }
 
                 bleHandlerCallback.connectionState(localName, macAddress, false);
-
-
             }
-
-
         }
 
         @Override
@@ -269,13 +248,11 @@ public class BLEHandler {
             String localName = device.getName();
             String macAddress = device.getAddress();
 
-
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 //Step 4 and 5: Services discovered.
                 //Characteristics and descriptors are automatically discovered with services in Android so we can stop here.
 
                 logDeviceMessage("Services discovered for",  gatt.getDevice());
-
 
                 //Find the relevant service by UUID
                 BluetoothGattService customService = getCustomService();
@@ -291,7 +268,6 @@ public class BLEHandler {
 
 
                 bleHandlerCallback.servicesDiscoveredState(localName, macAddress, true);
-
             } else {
                 logDeviceMessage("Services status " + status + " for",  gatt.getDevice());
                 bleHandlerCallback.servicesDiscoveredState(localName, macAddress, false);
@@ -300,9 +276,7 @@ public class BLEHandler {
 
         @Override
         public void onCharacteristicChanged (BluetoothGatt gatt, BluetoothGattCharacteristic characteristic){
-
             if(characteristic.getUuid().equals(UUID_CHAR_BUTTON)) {
-
                 BluetoothDevice device = gatt.getDevice();
                 String localName = device.getName();
                 String macAddress = device.getAddress();
@@ -310,14 +284,10 @@ public class BLEHandler {
                 byte[] newValue = characteristic.getValue();
                 String valueStr = new String(newValue, Charset.forName("US-ASCII"));
 
-
                 bleHandlerCallback.receivedStringValue(localName, macAddress, valueStr);
             }
         }
-
-
     };
-
 
     //Public facing toggle LED methods
 
@@ -328,9 +298,6 @@ public class BLEHandler {
     public void sendToggleYellowCommand(){
         writeThisToLedCharacteristic("y");
     }
-
-
-
 
     public void writeThisToLedCharacteristic(String stringToWrite){
         BluetoothGattService service = getCustomService();
@@ -349,5 +316,4 @@ public class BLEHandler {
 
         gattOfCurrentDevice.writeCharacteristic(ledChar);
     }
-
 }
