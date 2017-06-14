@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends Activity implements BLEHandlerCallback{
+public class MainActivity extends Activity implements BLEHandlerCallback {
     public static final String TAG = "MainActivity";
 
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
@@ -44,7 +44,7 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
         }
 
         //Check if at least Android 4.3
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             Toast.makeText(this, "You need Android 4.3 and above to use BLE.", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -60,15 +60,15 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
 
         //New in Android 6.0 Marshmallow, we now have runtime permissions.
         //BLE Scan requires location permissions and we have to ask the user to approve on runtime
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int hasLocationsPermission = checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
 
             if (hasLocationsPermission != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
             }
         }
 
-        statusView = (TextView)findViewById(R.id.textview_status);
+        statusView = (TextView) findViewById(R.id.textview_status);
 
         devicesMacAddr = new ArrayList<String>();
         devicesListAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, new ArrayList<String>());
@@ -103,7 +103,7 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
         }
     }
 
-    public void startScanButtonPressed(View view){
+    public void startScanButtonPressed(View view) {
         if (!BluetoothAdapter.getDefaultAdapter().isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivity(enableBtIntent);
@@ -117,29 +117,29 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
         bleHandler.bleScan(true);
     }
 
-    public void stopScanButtonPressed(View view){
+    public void stopScanButtonPressed(View view) {
         showStatusToScreen("Scan stopped");
         bleHandler.bleScan(false);
     }
 
-    public void disconnectButtonPressed(View view){
+    public void disconnectButtonPressed(View view) {
         bleHandler.disconnectCurrentlyConnectedDevice();
     }
 
-    public void toggleBlueButtonPressed(View view){
+    public void toggleBlueButtonPressed(View view) {
         bleHandler.sendToggleBlueCommand();
     }
 
-    public void toggleYellowButtonPressed(View view){
+    public void toggleYellowButtonPressed(View view) {
         bleHandler.sendToggleYellowCommand();
     }
 
-    public void showDeviceStatusToScreen(String frontMessage, String localName, String macAddress){
+    public void showDeviceStatusToScreen(String frontMessage, String localName, String macAddress) {
         String message = String.format("%s: %s (%s)", frontMessage, macAddress, localName);
         showStatusToScreen(message);
     }
 
-    public void showStatusToScreen(final String message){
+    public void showStatusToScreen(final String message) {
         //Run in UI thread as sometimes this method may be called from other threads
         runOnUiThread(new Runnable() {
             @Override
@@ -166,8 +166,8 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
     }
 
     @Override
-    public void connectionState(String localName, String macAddress, boolean state){
-        if(state){
+    public void connectionState(String localName, String macAddress, boolean state) {
+        if (state) {
             showDeviceStatusToScreen("Connected to", localName, macAddress);
         } else {
             showDeviceStatusToScreen("Disconnected from", localName, macAddress);
@@ -175,8 +175,8 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
     }
 
     @Override
-    public void servicesDiscoveredState(String localName, String macAddress, boolean state){
-        if(state){
+    public void servicesDiscoveredState(String localName, String macAddress, boolean state) {
+        if (state) {
             showDeviceStatusToScreen("Services discovered for", localName, macAddress);
         } else {
             showDeviceStatusToScreen("Service Discovery failed for", localName, macAddress);
@@ -184,7 +184,7 @@ public class MainActivity extends Activity implements BLEHandlerCallback{
     }
 
     @Override
-    public void receivedStringValue(String localName, String macAddress, final String strValue){
+    public void receivedStringValue(String localName, String macAddress, final String strValue) {
         showDeviceStatusToScreen("Received \"" + strValue + "\" from ", localName, macAddress);
     }
 }

@@ -32,8 +32,8 @@ import java.util.UUID;
 public class BLEHandler {
     private static final String TAG = "BLEHandler";
 
-    private static final UUID UUID_SERVICE =     UUID.fromString("12345678-9012-3456-7890-123456789012");
-    private static final UUID UUID_CHAR_LED =    UUID.fromString("00000000-0000-0000-0000-000000000010");
+    private static final UUID UUID_SERVICE = UUID.fromString("12345678-9012-3456-7890-123456789012");
+    private static final UUID UUID_CHAR_LED = UUID.fromString("00000000-0000-0000-0000-000000000010");
     private static final UUID UUID_CHAR_BUTTON = UUID.fromString("00000000-0000-0000-0000-000000000020");
 
     //This UUID is a Client Characteristic Configuration descriptor UUID for a Characteristic which has the notify property on the peripheral
@@ -57,21 +57,22 @@ public class BLEHandler {
     private BluetoothGatt gattOfCurrentDevice;
 
     private BLEHandlerCallback bleHandlerCallback;
-    public BLEHandler(Context context, BLEHandlerCallback bleHandlerCallback){
+
+    public BLEHandler(Context context, BLEHandlerCallback bleHandlerCallback) {
 
         this.context = context;
         this.bleHandlerCallback = bleHandlerCallback;
 
-        BluetoothManager bluetoothManager =  (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
     }
 
-    public void bleScan(boolean start){
-        if(start){
+    public void bleScan(boolean start) {
+        if (start) {
             //Step 1: Start scanning
             foundDevices.clear();
 
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 bleScanner = mBluetoothAdapter.getBluetoothLeScanner();
                 newLeScanCallback = new NewLeScanCallback();
 
@@ -99,14 +100,14 @@ public class BLEHandler {
                 mBluetoothAdapter.startLeScan(oldLeScanCallback);
             }
         } else {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if(bleScanner != null){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (bleScanner != null) {
                     bleScanner.stopScan(newLeScanCallback);
                     bleScanner = null;
                     newLeScanCallback = null;
                 }
             } else {
-                if(oldLeScanCallback != null) {
+                if (oldLeScanCallback != null) {
                     mBluetoothAdapter.stopLeScan(oldLeScanCallback);
                     oldLeScanCallback = null;
                 }
@@ -114,20 +115,20 @@ public class BLEHandler {
         }
     }
 
-    private void newDeviceScanned(final BluetoothDevice device, int rssi, byte[] scanRecord){
+    private void newDeviceScanned(final BluetoothDevice device, int rssi, byte[] scanRecord) {
         //Step 2 : Received advertisement packet
 
         String macAddress = device.getAddress();
         String localName = device.getName();
 
-        if(localName == null){
+        if (localName == null) {
             return;
         }
 
         String logMessage = String.format("Scanning: %s (%s), rssi: %d", localName, macAddress, rssi);
         //Log.i(TAG, logMessage);
 
-        if(!foundDevices.containsKey(macAddress)){
+        if (!foundDevices.containsKey(macAddress)) {
             Log.i(TAG, logMessage);
 
             foundDevices.put(macAddress, device);
@@ -137,9 +138,9 @@ public class BLEHandler {
     }
 
     //This is used from Android 4.3 to 4.4
-    private class OldLeScanCallback implements BluetoothAdapter.LeScanCallback{
+    private class OldLeScanCallback implements BluetoothAdapter.LeScanCallback {
         @Override
-        public void onLeScan(BluetoothDevice device, int rssi,  byte[] scanRecord) {
+        public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
             newDeviceScanned(device, rssi, scanRecord);
         }
     }
@@ -160,7 +161,7 @@ public class BLEHandler {
         }
     }
 
-    public void connectToDevice(String macAddress){
+    public void connectToDevice(String macAddress) {
 
         //Step 2.5: Connect to device
 
@@ -175,7 +176,7 @@ public class BLEHandler {
          * to prevent unintended background connection.
          */
 
-        if(Build.MANUFACTURER.equalsIgnoreCase("samsung")){
+        if (Build.MANUFACTURER.equalsIgnoreCase("samsung")) {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -189,15 +190,15 @@ public class BLEHandler {
         }
     }
 
-    public void disconnectCurrentlyConnectedDevice(){
-       if(gattOfCurrentDevice != null){
-           gattOfCurrentDevice.close();
-           gattOfCurrentDevice.disconnect();
-           gattOfCurrentDevice = null;
-       }
+    public void disconnectCurrentlyConnectedDevice() {
+        if (gattOfCurrentDevice != null) {
+            gattOfCurrentDevice.close();
+            gattOfCurrentDevice.disconnect();
+            gattOfCurrentDevice = null;
+        }
     }
 
-    private void logDeviceMessage(String frontMessage, BluetoothDevice device){
+    private void logDeviceMessage(String frontMessage, BluetoothDevice device) {
         String localName = device.getName();
         String macAddress = device.getAddress();
 
@@ -205,8 +206,8 @@ public class BLEHandler {
         Log.i(TAG, logMessage);
     }
 
-    private BluetoothGattService getCustomService(){
-        if(gattOfCurrentDevice == null){
+    private BluetoothGattService getCustomService() {
+        if (gattOfCurrentDevice == null) {
             return null;
         }
 
@@ -215,7 +216,7 @@ public class BLEHandler {
     }
 
     //To receive callbacks from a bluetooth device
-    private BluetoothGattCallback mGattCallback =  new BluetoothGattCallback() {
+    private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
 
@@ -234,7 +235,7 @@ public class BLEHandler {
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 logDeviceMessage("Disconnected from", gatt.getDevice());
 
-                if(gattOfCurrentDevice != null && gatt.getDevice().getAddress().equals(gatt.getDevice().getAddress())){
+                if (gattOfCurrentDevice != null && gatt.getDevice().getAddress().equals(gatt.getDevice().getAddress())) {
                     gattOfCurrentDevice = null;
                 }
 
@@ -252,7 +253,7 @@ public class BLEHandler {
                 //Step 4 and 5: Services discovered.
                 //Characteristics and descriptors are automatically discovered with services in Android so we can stop here.
 
-                logDeviceMessage("Services discovered for",  gatt.getDevice());
+                logDeviceMessage("Services discovered for", gatt.getDevice());
 
                 //Find the relevant service by UUID
                 BluetoothGattService customService = getCustomService();
@@ -269,14 +270,14 @@ public class BLEHandler {
 
                 bleHandlerCallback.servicesDiscoveredState(localName, macAddress, true);
             } else {
-                logDeviceMessage("Services status " + status + " for",  gatt.getDevice());
+                logDeviceMessage("Services status " + status + " for", gatt.getDevice());
                 bleHandlerCallback.servicesDiscoveredState(localName, macAddress, false);
             }
         }
 
         @Override
-        public void onCharacteristicChanged (BluetoothGatt gatt, BluetoothGattCharacteristic characteristic){
-            if(characteristic.getUuid().equals(UUID_CHAR_BUTTON)) {
+        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+            if (characteristic.getUuid().equals(UUID_CHAR_BUTTON)) {
                 BluetoothDevice device = gatt.getDevice();
                 String localName = device.getName();
                 String macAddress = device.getAddress();
@@ -291,18 +292,18 @@ public class BLEHandler {
 
     //Public facing toggle LED methods
 
-    public void sendToggleBlueCommand(){
+    public void sendToggleBlueCommand() {
         writeThisToLedCharacteristic("b");
     }
 
-    public void sendToggleYellowCommand(){
+    public void sendToggleYellowCommand() {
         writeThisToLedCharacteristic("y");
     }
 
-    public void writeThisToLedCharacteristic(String stringToWrite){
+    public void writeThisToLedCharacteristic(String stringToWrite) {
         BluetoothGattService service = getCustomService();
 
-        if(service == null){
+        if (service == null) {
             return;
         }
 
