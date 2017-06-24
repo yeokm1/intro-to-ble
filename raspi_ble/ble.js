@@ -53,7 +53,7 @@ function buttonPressed(err, value){
         if(charButtonNotification){
 
             var numString = buttonCharValue.toString()
-            
+
             //Convert number to buffer as that is what the API requires
             var buf = new Buffer(numString, 'ascii')
             charButtonNotification(buf);
@@ -142,7 +142,7 @@ descriptors: [],
 onReadRequest: null,
 onWriteRequest: null,
 onSubscribe: function(maxValueSize, updateValueCallback) {
-        
+
         //The maxValueSize obtained may be >20 but to be safe, we ignore this and send in chunks of 20.
         console.log("central onSubscribe, maxValueSize " + maxValueSize);
 
@@ -177,7 +177,7 @@ bleno.on('stateChange', function(state) {
 
 bleno.on('advertisingStart', function(error) {
     console.log('on -> advertisingStart: ' + (error ? 'error ' + error : 'success'));
-                
+
     if (!error) {
         //If advertising starts with no problem, we tell bleno to "lock in" those services
         bleno.setServices([service1]);
@@ -193,13 +193,13 @@ bleno.on('accept', function(clientAddress){
 });
 
 bleno.on('disconnect', function(clientAddress){
-        
+
     console.log('Disconnected ' + clientAddress);
-    
+
     //This notification function is no longer valid so set to null
     charButtonNotification = null;
 
-    
+
     //Turn red LED on
     refreshConnectionLED(false);
 });

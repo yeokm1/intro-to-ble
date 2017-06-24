@@ -46,20 +46,20 @@ long buttonLastPressedTime = millis();
 //Runs only once the when the device is started
 void setup() {
   Serial.begin(9600);
-  
+
   //Initialise LEDS
   pinMode(PIN_RED_LED, OUTPUT);
   pinMode(PIN_GREEN_LED, OUTPUT);
   pinMode(PIN_BLUE_LED, OUTPUT);
   pinMode(PIN_YELLOW_LED, OUTPUT);
-  
+
   //Initialise button using internal pull-up resistor. Default: 1, Pressed: 0
   pinMode(PIN_BUTTON, INPUT_PULLUP);
 
-  //Device name: usually general type of device. 
+  //Device name: usually general type of device.
   //Android does not show the device name, it only shows the local name.
   blePeripheral.setDeviceName("YKM's Arduino");
-  
+
   //Local name: To distinguish function of device. Up to 20 characters for NRF8001
   blePeripheral.setLocalName("Intro to Arduino BLE");
 
@@ -70,7 +70,7 @@ void setup() {
   blePeripheral.setAdvertisedServiceUuid(service1.uuid());
 
   /* For this library, you have to add the services and characteristics recursively in this order
-  
+
     1. Service 1
     2.   - Characteristic 1 for Service 1
     3.      - Optional Descriptor for Char 1, Service 1
@@ -82,7 +82,7 @@ void setup() {
     9. Characteristic 2 for Service 2
     9. Other characteristics for Service 2 ,,,
     10. Other services ...
-  
+
   */
 
   blePeripheral.addAttribute(service1);
@@ -91,55 +91,55 @@ void setup() {
 
   //Set the function to call when the central as written a new value to this characteristic
   char_led.setEventHandler(BLEWritten, characteristicWritten);
-  
+
   //Set advertising interval to 1 second to prevent spamming the airwaves and the BLE Sniffer
   blePeripheral.setAdvertisingInterval(1000);
 
   // begin initialization
   blePeripheral.begin();
-  
+
   Serial.println("Peripheral Started");
-  
+
 }
 
 //Runs repeatedly like while(true)
 void loop() {
-  
+
   //Will get a reference if the central is connected or else it will be null
   BLECentral central = blePeripheral.central();
- 
-  
+
+
   //If there is a active connection to Central
   if (central) {
     refreshConnectionLED(true);
-    
+
     Serial.print("Connected to central: ");
     Serial.println(central.address());
-        
+
     //Conduct BLE operations while connected to central in this while loop
     while (central.connected()) {
-      
+
       long currentTime = millis();
-      
+
       int buttonState = digitalRead(PIN_BUTTON);
-      
+
       //This code is to debounce the button input.
       if(buttonState == LOW && ((currentTime - buttonLastPressedTime) > DEBOUNCE_TIME)){
         buttonLastPressedTime = currentTime;
-        
+
         //Increment and convert number to string
         buttonCharValue++;
         char buff[MAX_NUMBER_OF_BYTES_PER_WRITE];
         sprintf(buff, "%d", buttonCharValue);
-        
+
         Serial.print("Sending \"");
         Serial.print(buttonCharValue);
         Serial.println("\" to central");
-        
+
         //Write new string to characteristic for central to detect
         char_button.setValue(buff);
       }
-      
+
     }
 
   } else {
@@ -169,25 +169,20 @@ void toggleYellowLED(){
 
 //Callback for characteristic write by central
 void characteristicWritten(BLECentral& central, BLECharacteristic& characteristic) {
-  
+
   //Just to ensure it is the correct characteristic that is written to
   if(&char_led == &characteristic){
-      
+
     char newCharValue = char_led.value();
-    
-    Serial.print("Received \"");    
+
+    Serial.print("Received \"");
     Serial.print(newCharValue);
     Serial.println("\" from central");
-        
+
     if(newCharValue == 'b'){
       toggleBlueLED();
     } else if(newCharValue == 'y'){
       toggleYellowLED();
     }
-  }    
+  }
 }
-
-
-
-
-
